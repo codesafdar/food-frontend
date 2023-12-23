@@ -13,6 +13,9 @@
 /.next/
 /out/
 
+#node versio
+./nvmrc
+
 # production
 /build
 

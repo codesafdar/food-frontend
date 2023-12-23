@@ -1,3 +1,3 @@
 export const tabItems = [{ name: 'Starters', value:'starters' }, { name: 'Somewhat Local', value:'some_local' }, { name: 'Somewhat Sooper', value:'some_sooper' }, { name: 'Cheezy Treats', value:'cheezy_treets' }, { name: 'Sandwiches & Platters', value:'sandwiches_platers' }, { name: 'Pizza Deals', value:'pizza_deals' }, { name: 'Special Pizza', value:'special_pizza' }, { name: 'Somewhat Amazing', value:'some_amazing' },
 { name: 'Pastas', value:'pastas' }, { name: 'Burgerz', value:'burgers' }, { name: 'Side Orders', value:'side_orders' }, { name: 'Addons', value: 'addons' }]
-export const options = ['Please choose an option','Variation', 'Edge Filling','Extra Topping','Pizza Flavour','AddOns','Drink Flavour Topping']
+export const options = ['Variation', 'Edge Filling','Extra Topping','Pizza Flavour','AddOns','Drink Flavour Topping']

@@ -2,14 +2,17 @@ import React, { useEffect } from "react";
 import { useFormik, FormikHelpers } from "formik";
 import * as Yup from 'yup'
 
-
 // components
 import CategoryList from "@/components/admin/CategoryList";
-import { setCategoryList,editCategory } from "@/redux/slices/adminSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { addCategory } from "@/redux/actions";
+import { resetError } from "@/redux/slices/adminSlice";
 
-interface Input {
-  category: string
+// interface
+export type ICategoryInput = {
+  category?: string
+  _id?: string
+  isUpdate?: boolean
 }
 
 const initialValues = {
@@ -18,13 +21,20 @@ const initialValues = {
 
 const AddCategory = () => {
   const dispatch = useAppDispatch()
-  const getCategory = useAppSelector(state => state.admin.editedCat)
+  const { editedCat, isError } = useAppSelector(state => state.admin)
 
   // submit form data
-  const submitFormData = (values: Input, actions: FormikHelpers<Input>) => {
-    dispatch(setCategoryList({ ...values, id: getCategory?.id }))
+  const submitFormData = (values: ICategoryInput, actions: FormikHelpers<ICategoryInput>) => {
+    if (editedCat?.isUpdate) {
+      const { isUpdate, _id } = editedCat
+      values = {
+        _id,
+        isUpdate,
+        ...values
+      }
+    }
+    dispatch(addCategory(values))
     actions.resetForm()
-    dispatch(editCategory(undefined))
   }
 
   const validationSchema = Yup.object({
@@ -39,8 +49,15 @@ const AddCategory = () => {
   })
 
   useEffect(() => {
-    if (getCategory?.item) setFieldValue('category', getCategory?.item)
-  }, [getCategory])
+    if (editedCat?.isUpdate) setFieldValue('category', editedCat?.category)
+  }, [editedCat])
+
+  useEffect(() => {
+    const delayReset = setTimeout(() => {
+      dispatch(resetError())
+    }, 3000)
+    return () => clearTimeout(delayReset)
+  }, [isError])
 
   return (
     <div>
@@ -72,3 +89,4 @@ const AddCategory = () => {
 }
 
 export default AddCategory
+

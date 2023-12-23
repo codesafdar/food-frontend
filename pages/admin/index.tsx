@@ -1,9 +1,9 @@
 import React from 'react'
-import CategoryTabs from "@/components/admin/CategoryTabs";
+import Product from "@/components/admin/Product";
 
 const Admin = () => {
   return (
-    <CategoryTabs />
+    <Product />
   )
 }
 

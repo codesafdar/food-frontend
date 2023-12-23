@@ -1,16 +1,16 @@
 import React, { ReactNode } from "react";
-import CategoryTabs from './CategoryTabs'
+import CategoryTabs from './Product'
 import Link from 'next/link'
 import Image from 'next/image'
 
 
 
-interface Props {
+interface IRootProps {
   children?: ReactNode
   // any props that come into the component
 }
 
-const RootLayout = ({ children, ...props }: Props) => {
+const SideBar = ({ children, ...props }: IRootProps) => {
   return (
     <>
       <div className="flex bg-gray-100 text-gray-900">
@@ -20,6 +20,7 @@ const RootLayout = ({ children, ...props }: Props) => {
               src="/images/nayabs.jpeg"
               width={100}
               height={70}
+              priority
               alt="Picture of the author"
               layout="responsive"
               
@@ -43,4 +44,4 @@ const RootLayout = ({ children, ...props }: Props) => {
   )
 }
 
-export default RootLayout
+export default SideBar

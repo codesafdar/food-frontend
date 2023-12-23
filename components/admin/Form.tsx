@@ -3,27 +3,33 @@ import { useFormik, FormikHelpers } from "formik";
 import * as Yup from 'yup'
 import Modal from "./Modal";
 import { tabItems, options } from "@/utils/constants";
+import { useAppSelector } from "@/redux/hooks";
 
-interface Inputs {
+interface IOption {
+  itemName: string
+  itemPrice: number | string
+  optionType: string
+}
+export interface IFormInput {
+  category: string
   title: string
   description: string
   startingPrice: number | undefined
-  options: string
   image: string
-  itemName: string
-  itemPrice: string
-  categories: string
+  optionObj: IOption
 }
 
-const initialValues: Inputs = {
+const initialValues: IFormInput = {
+  category: '',
   title: '',
   description: '',
   startingPrice: undefined,
-  options: '',
   image: '',
-  itemName: '',
-  itemPrice: '',
-  categories: ''
+  optionObj: {
+    itemName: '',
+    itemPrice: '',
+    optionType: ''
+  }
 }
 
 const Form = () => {
@@ -31,17 +37,16 @@ const Form = () => {
 
   const validationSchema = Yup.object({
     title: Yup.string().required('Title is required'),
-    categories: Yup.string().required('Category is required')
+    category: Yup.string().required('Category is required')
   })
 
-  const submitFormData = (values: Inputs, actions?: FormikHelpers<Inputs>) => {
-
+  const submitFormData = (values: IFormInput, actions?: FormikHelpers<IFormInput>) => {
     console.log('Form submitted with values:', values)
     actions && actions.resetForm()
   }
 
   // formik handling
-  const { values, errors, touched, handleChange, handleSubmit, handleBlur } = useFormik({
+  const { values, errors, touched, handleChange, handleSubmit, handleBlur, setFieldValue } = useFormik({
     initialValues,
     enableReinitialize: true,
     onSubmit: submitFormData,
@@ -50,24 +55,26 @@ const Form = () => {
     // validateOnBlur: false
   })
 
+  // console.log('valesss>>>>', values)
+
   useEffect(() => {
-    if (values?.options) setShowModal(true)
+    if (values?.optionObj?.optionType) setShowModal(true)
     else setShowModal(false)
-  }, [values.options])
+  }, [values?.optionObj?.optionType])
 
   return (
     <>
       <form className="w-full text-center" onSubmit={handleSubmit}>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
-              Categories
+            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+              category
             </label>
             <div className="relative">
               <select
                 onChange={handleChange}
-                value={values.categories}
-                name='categories'
+                value={values.category}
+                name='category'
                 className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
                 <option value='' className="text-gray-700">Please select category</option>
                 {tabItems.map((item, index) => {
@@ -80,8 +87,8 @@ const Form = () => {
                 <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
               </div>
             </div>
-            {(touched.categories && errors.categories) &&
-              <div className="text-red-600 text-sm mt-2">{errors.categories}</div>
+            {(touched.category && errors.category) &&
+              <div className="text-red-600 text-sm mt-2">{errors.category}</div>
             }
           </div>
           <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
@@ -115,11 +122,11 @@ const Form = () => {
               placeholder="Enter base price of item" />
           </div>
           <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
+            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
               Options
             </label>
             <div className="relative">
-              <select onChange={handleChange} value={values.options} name='options' className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+              <select onChange={handleChange} value={values?.optionObj?.optionType} name='optionObj.optionType' className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
                 <option value="">Please choose an option</option>
                 {options.map((item, index) => {
                   return (
@@ -131,7 +138,13 @@ const Form = () => {
                 <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
               </div>
             </div>
-            <Modal showModal={showModal} setShowModal={setShowModal} handleChange={handleChange} values={values} />
+            <Modal
+              showModal={showModal}
+              setShowModal={setShowModal}
+              handleChange={handleChange}
+              values={values}
+              setFieldValue={setFieldValue}
+            />
           </div>
           <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="">
