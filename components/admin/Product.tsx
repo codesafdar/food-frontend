@@ -1,17 +1,12 @@
 import * as React from "react";
 import Form from "./Form";
-import { useAppSelector, useAppDispatch } from "@/redux/hooks";
-import { IproductOptionData } from "@/redux/slices/adminSlice";
-import { FaTrash } from "react-icons/fa";
-import { deleteProductOption } from "@/redux/slices/adminSlice";
+import ProductTable from "./ProductTable";
 
 interface TabProps {
   color?: string
 }
 
 const Product = ({ color }: TabProps) => {
-  const dispatch = useAppDispatch()
-  const productOptionData: IproductOptionData[] = useAppSelector(state => state.admin.productOptionData)
 
   return (
     <>
@@ -30,34 +25,8 @@ const Product = ({ color }: TabProps) => {
               </div>
             </div>
           </div>
-          <div className="shadow-lg rounded bg-white w-1/2 p-4">
-            <table className="w-full table-auto border-collapse text-center">
-              <thead>
-                <tr>
-                  <th className="">Type</th>
-                  <th className="">Title</th>
-                  <th className="">Price</th>
-                </tr>
-              </thead>
-              <tbody className="">
-                {
-                  productOptionData.map((item, index) => {
-                    return (
-                      <tr key={index}>
-                        <td className="text-center">{item.optionType}</td>
-                        <td className="text-center">{item.itemName}</td>
-                        <td className="text-center">{item.itemPrice}</td>
-                        <td className="cursor-pointer text-center text-red-600" onClick={()=> dispatch(deleteProductOption(index))}> 
-                          <FaTrash />
-                        </td>
-                      </tr>
-                    )
-                  })
-                }
-              </tbody>
-            </table>
-          </div>
         </div>
+        <ProductTable />
       </div>
     </>
   );

@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
-import CategoryTabs from './Product'
 import Link from 'next/link'
-import Image from 'next/image'
+import Image from 'next/legacy/image'
+import { MdOutlineProductionQuantityLimits } from "react-icons/md";
 
 
 
@@ -16,20 +16,23 @@ const SideBar = ({ children, ...props }: IRootProps) => {
       <div className="flex bg-gray-100 text-gray-900">
         <div className="flex h-screen max-w-[160px] min-w-[160px] flex-col pt-3 items-center border-r border-gray-200 bg-white">
           <div className="flex  items-center justify-center border-b border-gray-200 p-2">
-            <Image
-              src="/images/nayabs.jpeg"
+            <img
+              src="https://res.cloudinary.com/devorbis/image/upload/v1681628287/myPhoto_ngncxq.jpg"
               width={100}
               height={70}
-              priority
               alt="Picture of the author"
-              layout="responsive"
-              
+              className="rounded"
             />
           </div>
           <nav className="flex flex-1 flex-col gap-y-4 pt-10">
-            <Link href='/admin' className="text-sm text-blue-600">Add Product</Link>
-            <Link href='/admin/add-category' className="text-sm text-blue-600">Add Categories</Link>
-            <Link href='/admin/add-option' className="text-sm text-blue-600">Add Option</Link>
+            <Link href='/admin' className="text-lg text-red-600">
+              {/* <span>  */}
+              {/* <MdOutlineProductionQuantityLimits /> */}
+              Products
+              {/* </span> */}
+              </Link>
+            <Link href='/admin/add-category' className="text-lg text-red-600">Categories</Link>
+            <Link href='/admin/add-option' className="text-lg text-red-600">Options</Link>
           </nav>
           {/* <button className="group relative rounded-xl p-2 text-gray-400 hover:bg-gray-100">
             <svg width="24" height="24" className="h-6 w-6 stroke-current" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

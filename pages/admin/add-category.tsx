@@ -6,7 +6,7 @@ import * as Yup from 'yup'
 import CategoryList from "@/components/admin/CategoryList";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { addCategory } from "@/redux/actions";
-import { resetError } from "@/redux/slices/adminSlice";
+import { resetToast } from "@/redux/slices/adminSlice";
 
 // interface
 export type ICategoryInput = {
@@ -54,7 +54,7 @@ const AddCategory = () => {
 
   useEffect(() => {
     const delayReset = setTimeout(() => {
-      dispatch(resetError())
+      dispatch(resetToast())
     }, 3000)
     return () => clearTimeout(delayReset)
   }, [isError])

@@ -1,50 +1,57 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useFormik, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 
 // redux
-import { resetError, deleteOption, editOption } from '@/redux/slices/adminSlice'
+import { resetToast } from '@/redux/slices/adminSlice'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
-import { addOption } from '@/redux/actions'
+import { addOption, getOptions, deleteOption, updateOption } from '@/redux/actions'
+
 // icons
 import { FaTrash, FaEdit } from "react-icons/fa"
 
-// components
+// services
 import { TailSpin } from 'react-loader-spinner'
 import ShowToast from '@/components/common/ShowToast'
 
-// interface
-export interface InputFields {
-  option: string
-  isRequired: boolean
-  isMultiple: boolean
-  id?: string
-}
-// initial values
-const initialValues = {
-  option: '',
-  isRequired: false,
-  isMultiple: false
+export interface IOptionType {
+    option: string
+    isRequired: boolean
+    isMultiple: boolean
+    _id?: string
 }
 
-// schema
+// interface
+export interface InputFields {
+  optionData: IOptionType
+}
+
+// initial values
+const initialValues: InputFields = {
+  optionData: {
+    option: '',
+    isRequired: false,
+    isMultiple: false,
+  }
+}
+
 const validationSchema = Yup.object({
-  option: Yup.string().required('Please enter option'),
-})
+  optionData: Yup.object({
+    option: Yup.string().required('Please enter option'),
+  }),
+});
 
 // component
 const AddOption = () => {
-  const { optionsList, isLoading, isError, errormessage } = useAppSelector(state => state.admin)
-  console.log("🚀 ~ file: add-option.tsx:38 ~ AddOption ~ errormessage:", errormessage,isError)
-  const getOption = useAppSelector(state => state.admin.editedOption)
-  const { option, id, isRequired, isMultiple } = getOption || {}
-
+  const { optionsList, isLoading, isError, errormessage, isSuccess } = useAppSelector(state => state.admin)
+  const [isUpdate, setIsUpdate] = useState(false)
   const dispatch = useAppDispatch()
 
   const submitFormData = (values: InputFields, actions: FormikHelpers<InputFields>) => {
-    dispatch(addOption(values))
+    if (isUpdate) dispatch(updateOption(values))
+    else dispatch(addOption(values))
     actions.resetForm()
-    // dispatch(editOption({ id: undefined }))
+    setIsUpdate(false)
   }
 
   const { handleChange, handleBlur, setFieldValue, handleSubmit, values, errors, touched } = useFormik({
@@ -55,55 +62,61 @@ const AddOption = () => {
   })
 
   useEffect(() => {
-    // if (getOption) {
-    //   setFieldValue('option', option)
-    //   setFieldValue('isMultiple', isMultiple)
-    //   setFieldValue('isRequired', isRequired)
-    // }
-  }, [getOption])
+    dispatch(getOptions())
+  }, [dispatch])
 
   useEffect(() => {
     const delayReset = setTimeout(() => {
-      dispatch(resetError())
+      dispatch(resetToast())
     }, 3000)
-    return () => clearTimeout(delayReset)
-  }, [isError])
 
+    return () => clearTimeout(delayReset)
+  }, [isError, isSuccess])
+
+  const handleDelete = (id: string) => {
+    dispatch(resetToast())
+    dispatch(deleteOption(id))
+  }
+  const handleUpdate = (item: InputFields) => {
+    setIsUpdate(true)
+    setFieldValue('optionData', item)
+  }
   return (
     <form className='flex flex-col items-center justify-center mt-4' onSubmit={handleSubmit}>
       <div className='text-2xl font-bold text-gray-600'>Add Option</div>
-      <div className={`${(touched.option && errors.option) ? 'mb-0' : 'mb-3'} mt-4 text-center`}>
+      <div className={`${(touched.optionData?.option && errors.optionData?.option) ? 'mb-0' : 'mb-3'} mt-4 text-center`}>
         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
           Option
         </label>
         {isError && <ShowToast message={errormessage} type='error' />}
+        {isSuccess && <ShowToast message='Deleted successfully' type='success' />}
         <input
           onChange={handleChange}
           onBlur={handleBlur}
-          value={values.option}
-          name='option'
+          value={values.optionData.option}
+          name='optionData.option'
           className="appearance-none md:w-[500px] bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" type="text"
           placeholder="Enter option name" />
         {
-          (touched.option && errors.option) &&
-          <div className="text-red-600 text-sm mb-3">{errors.option}</div>
+          (touched.optionData?.option && errors.optionData?.option) &&
+          <div className="text-red-600 text-sm mb-3">{errors.optionData?.option}</div>
         }
       </div>
       <div className="flex justify-between md:w-[500px] mb-3">
         <div className='text-md'>Required</div>
         <input
-          checked={values.isRequired}
+          checked={values.optionData.isRequired}
           onChange={handleChange}
-          name='isRequired'
+          name='optionData.isRequired'
           className='w-5'
           type='checkbox' />
       </div>
       <div className="flex justify-between md:w-[500px]">
         <div className='text-md'>Multiple</div>
         <input
-          checked={values.isMultiple}
+          checked={values.optionData.isMultiple}
           onChange={handleChange}
-          name='isMultiple'
+          name='optionData.isMultiple'
           className='w-5'
           type='checkbox' />
       </div>
@@ -119,9 +132,9 @@ const AddOption = () => {
           </div>
           :
           <ol className='list-decimal ml-auto mr-auto w-1/2 mt-2'>
-            {optionsList.map((item, index) => {
+            {optionsList?.length > 0 && optionsList.map((item) => {
               return (
-                <div className='flex flex-row justify-between items-center mb-2' key={index}>
+                <div className='flex flex-row justify-between items-center mb-2' key={item._id}>
                   <div className=''>
                     <li className='pl-1'>{item.option}
                       {(item.isRequired || item.isMultiple) && <span className='text-yellow-600 mx-1'>
@@ -130,12 +143,12 @@ const AddOption = () => {
                   </div>
                   <div className='flex space-x-3'>
                     <div
-                      onClick={() => dispatch(deleteOption(index))}
+                      onClick={() => handleDelete(item._id)}
                       className='text-red-600'>
                       <FaTrash />
                     </div>
                     <div
-                      onClick={() => { dispatch(editOption({ id: index, value: item.option })) }}
+                      onClick={() => handleUpdate(item)}
                       className='text-green-600'>
                       <FaEdit />
                     </div>

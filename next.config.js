@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['www.pexels.com'],
+    domains: ['res.cloudinary.com'],
+    formats: ["image/webp"],
   },
 }
 

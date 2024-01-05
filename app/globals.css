@@ -25,3 +25,31 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+@layer components {
+  .cornerDeleteBtn {
+    position: absolute;
+    color: red;
+    cursor: pointer;
+    font-size: 25px;
+    top: -17px;
+    right: -17px;
+  }
+
+
+  .tableHeading {
+    background-color: rgb(219 234 254);
+    text-align: center;
+    padding-left: 32px;
+    padding-right: 32px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    border-width: 1px;
+  }
+
+  .tableData {
+    border-width: 1px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
