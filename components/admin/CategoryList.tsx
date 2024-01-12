@@ -37,7 +37,7 @@ const CategoryList = () => {
   }
 
   return (
-    <div className='md:ml-40 mt-5 flex flex-col md:items-start'>
+    <div className='mt-5 flex flex-col md:items-center'>
       <div className='text-2xl text-pink-500 border-b-2 md:w-[135px] mb-3'>CategoryList</div>
       {isError && <ShowToast message={errormessage} type='error' />}
       {isSuccess && <ShowToast message='Deleted successfully' type='success' />}

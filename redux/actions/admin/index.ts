@@ -3,6 +3,8 @@ import { ICategoryInput } from "@/pages/admin/add-category";
 import { InputFields } from "@/pages/admin/add-option";
 import axios from "axios";
 import { IFormInput } from "@/components/admin/Form";
+import useSWR from 'swr'
+
 
 // category
 
@@ -25,6 +27,7 @@ export const addCategory = createAsyncThunk(
     }
   }
 )
+
 // get
 export const getCategories = createAsyncThunk(
   'category/getAll', async (arg, thunkAPI) => {
@@ -39,6 +42,7 @@ export const getCategories = createAsyncThunk(
     }
   }
 )
+
 // delete
 export const deleteCategory = createAsyncThunk(
   'category/delete', async (id: string, thunkAPI) => {
