@@ -1,13 +1,13 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { ICategoryInput } from "@/pages/admin/add-category";
-import { InputFields } from "@/pages/admin/add-option";
+import { ICategoryInput } from "@/pages/admin/category";
+import { InputFields } from "@/pages/admin/options";
 import axios from "axios";
 import { IFormInput } from "@/components/admin/Form";
-import useSWR from 'swr'
+import { IAdminLogin } from "@/pages/auth/admin-login";
+import { ICreateAdmin } from "@/components/admin/CreateAdmin";
 
 
 // category
-
 export const addCategory = createAsyncThunk(
   'category/add', async (data: ICategoryInput, thunkAPI) => {
     try {
@@ -191,11 +191,52 @@ export const updateProduct = createAsyncThunk(
         thunkAPI.dispatch(getAllProducts())
         return update.data
       } else return thunkAPI.rejectWithValue(id)
-      
+
     }
     catch (err: any) {
       return thunkAPI.rejectWithValue(err.response.data.message)
 
+    }
+  }
+)
+
+// ADMIN Login
+export const adminLogin = createAsyncThunk(
+  'admin/login', async (data: IAdminLogin, thunkAPI) => {
+    try {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}admin/login`, data)
+      if (res.status === 201) {
+        const token = res.data
+        localStorage.setItem('token', JSON.stringify(token))
+
+        return token
+      }
+      else return thunkAPI.rejectWithValue('Went something wrong')
+    }
+    catch (err: any) {
+      return thunkAPI.rejectWithValue(err.response.data.message)
+    }
+  }
+)
+
+// create admin
+export const createAdminAction = createAsyncThunk(
+  'createAdmin', async (data: ICreateAdmin, thunkAPI) => {
+    try {
+      const { token } = JSON.parse(localStorage.getItem('token') || '')
+      const config = {
+        headers: { Authorization: `${token}` }
+      };
+
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}admin/create-admin`, data, config)
+      console.log("🚀 ~ file: index.ts:230 ~ 'createAdmin',async ~ response:", response)
+      if(response.status === 201) {
+        return response.data
+      }
+      return thunkAPI.rejectWithValue('Went something wrong')
+
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.response.data.message)
     }
   }
 )

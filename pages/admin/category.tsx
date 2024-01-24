@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useFormik, FormikHelpers } from "formik";
 import * as Yup from 'yup'
-import { redirect } from "next/navigation";
 
 // components
 import CategoryList from "@/components/admin/CategoryList";
@@ -19,26 +18,6 @@ export type ICategoryInput = {
 const initialValues = {
   category: ''
 }
-
-// validate end point
-export async function getServerSideProps() {
-  const isAuthenticated = false
-  if (!isAuthenticated) {
-    return {
-      redirect: {
-        destination: '/admin/login'
-      },
-    };
-  }
-
-  // If authenticated, proceed with rendering the page
-  return {
-    props: {
-  
-    }, 
-  };
-}
-
 
 const AddCategory = () => {
   const dispatch = useAppDispatch()

@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { IOptionType, InputFields } from "@/pages/admin/add-option";
-import { addCategory, getCategories, deleteCategory, updateCategory, addOption, getOptions, deleteOption, updateOption, addProduct, getAllProducts, deleteProduct, updateProduct } from "@/redux/actions";
-import { ICategoryInput } from "@/pages/admin/add-category";
+import { IOptionType, InputFields } from "@/pages/admin/options";
+import { addCategory, getCategories, deleteCategory, updateCategory, addOption, getOptions, deleteOption, updateOption, addProduct, getAllProducts, deleteProduct, updateProduct, adminLogin, createAdminAction } from "@/redux/actions";
+import { ICategoryInput } from "@/pages/admin/category";
 import { IFormInput, initialValues } from "@/components/admin/Form";
 
 // interfaces
@@ -31,6 +31,7 @@ export interface IAdminData {
   productList: IFormInput[]
   isShowModal: IShowModal
   getOneProductData: IFormInput
+  adminToken: string
 }
 
 const initialState: IAdminData = {
@@ -49,7 +50,8 @@ const initialState: IAdminData = {
     showImage: '',
     id: ''
   },
-  getOneProductData: initialValues
+  getOneProductData: initialValues,
+  adminToken: ''
 }
 
 const adminSlice = createSlice({
@@ -82,6 +84,9 @@ const adminSlice = createSlice({
     setProductData: (state, { payload }) => {
       state.getOneProductData = payload
       state.productOptionData = payload.optionsList
+    },
+    removeToken: (state) => {
+      state.adminToken = ''
     }
   },
   extraReducers: (builder) => {
@@ -270,6 +275,35 @@ const adminSlice = createSlice({
         state.isError = true
         state.errormessage = payload as string
       })
+
+      // admin login
+      .addCase(adminLogin.pending, state => {
+        state.isLoading = true
+      })
+      .addCase(adminLogin.fulfilled, (state, { payload }) => {
+        state.isLoading = false
+        state.isSuccess = true
+        state.adminToken = payload
+      })
+      .addCase(adminLogin.rejected, (state, { payload }) => {
+        state.isLoading = false
+        state.isError = true
+        state.errormessage = payload as string
+      })
+
+      // create admin
+      .addCase(createAdminAction.pending, state => {
+        state.isLoading = true
+      })
+      .addCase(createAdminAction.fulfilled, (state, { payload }) => {
+        state.isLoading = false
+        state.isSuccess = true
+      })
+      .addCase(createAdminAction.rejected, (state, { payload }) => {
+        state.isLoading = false
+        state.isError = true
+        state.errormessage = payload as string
+      })
   },
 })
 
@@ -281,6 +315,7 @@ export const {
   resetToast,
   setIsShowModal,
   setProductData,
+  removeToken
 } = actions
 
 export default reducer

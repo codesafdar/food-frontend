@@ -1,29 +1,24 @@
-// import React, { useEffect } from 'react'
-// import { useRouter } from 'next/router'
-// import { useLayoutEffect } from 'react';
+// // hoc/withAuth.js
+// import { useEffect } from 'react';
+// import { useRouter } from 'next/router';
+// // import { isAuthenticated } from '../utils/auth';
 
-
-// const CheckIsAuthenticated = (WrappedComponent: any) => {
-//   const WithAuth = (props: any) => {
+// const withAuth = (WrappedComponent: any) => {
+//   const AuthenticatedComponent = (props: any) => {
 //     const router = useRouter();
 
-//     // Check authentication status (e.g., from Redux, context, etc.)
-//     const isAuthenticated = false
-
-//     useLayoutEffect(() => {
-//       if (!isAuthenticated) {
-//         router.push('auth/login'); // Redirect to login page if not authenticated
+//     useEffect(() => {
+//       // Check if the user is authenticated
+//       const isAuthenticated = localStorage.getItem('token')
+//       console.log("🚀 ~ file: CheckIsAuthenticated.tsx:13 ~ useEffect ~ isAuthenticated:", isAuthenticated)
+//       if (isAuthenticated) {
+//         router.push('/admin');
 //       }
-//     }, [isAuthenticated, router]);
-
-//     if (!isAuthenticated) {
-//       return <div>Loading...</div>; // Or a loading spinner while checking authentication
-//     }
+//     }, []);
 
 //     return <WrappedComponent {...props} />;
 //   };
 
-//   return WithAuth;
-// }
-
-// export default CheckIsAuthenticated
+//   return AuthenticatedComponent;
+// };
+// export default withAuth

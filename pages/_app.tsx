@@ -11,7 +11,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter()
 
   const getLayout = (pathname: string) => {
-    if (pathname.startsWith('/admin') && false) {
+    if (pathname.startsWith('/admin')) {
       return <AdminLayout {...pageProps}>
         <Component />
       </AdminLayout>

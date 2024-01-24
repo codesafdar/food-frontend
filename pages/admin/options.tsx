@@ -41,26 +41,6 @@ const validationSchema = Yup.object({
   }),
 });
 
-// validate end point
-export async function getServerSideProps() {
-  const isAuthenticated = false
-  if (!isAuthenticated) {
-    return {
-      redirect: {
-        destination: '/admin/login'
-      },
-    };
-  }
-
-  // If authenticated, proceed with rendering the page
-  return {
-    props: {
-  
-    }, 
-  };
-}
-
-
 // component
 const AddOption = () => {
   const { optionsList, isLoading, isError, errormessage, isSuccess } = useAppSelector(state => state.admin)

@@ -5,7 +5,7 @@ import { TailSpin } from 'react-loader-spinner'
 import { resetToast } from '@/redux/slices/adminSlice'
 import { getCategories, deleteCategory, updateCategory } from '@/redux/actions'
 import ShowToast from '@/components/common/ShowToast'
-import { ICategoryInput } from '@/pages/admin/add-category'
+import { ICategoryInput } from '@/pages/admin/category'
 
 // component
 const CategoryList = () => {
@@ -43,7 +43,7 @@ const CategoryList = () => {
       {isSuccess && <ShowToast message='Deleted successfully' type='success' />}
       {isLoading ? <TailSpin color='red' /> :
         <ol className='mb-2 md:ml-4 list-decimal border-red-700 w-1/3'>
-          {categoryList?.map((item, index) => {
+          {categoryList.length && categoryList?.map((item, index) => {
             return (
               <div
                 key={index}

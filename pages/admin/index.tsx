@@ -1,25 +1,8 @@
-import React from 'react'
+"use client"
+import React, { useLayoutEffect } from 'react'
 import Product from "@/components/admin/Product";
 
-export async function getServerSideProps() {
-  const isAuthenticated = false
-  if (!isAuthenticated) {
-    return {
-      redirect: {
-        destination: 'admin/login'
-      },
-    };
-  }
-
-  // If authenticated, proceed with rendering the page
-  return {
-    props: {
-  
-    }, 
-  };
-}
-
-const Admin = () => {
+const Admin: React.FC = () => {
   return (
     <Product />
   )

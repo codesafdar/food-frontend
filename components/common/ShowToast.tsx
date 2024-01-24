@@ -19,7 +19,7 @@ const ShowToast = ({ type, message }: IToast) => {
       case 'error':
         toast.error(message, {
           position: toast.POSITION.TOP_CENTER,
-          autoClose: 2000
+          autoClose: 5000
         });
         break;
       default:
