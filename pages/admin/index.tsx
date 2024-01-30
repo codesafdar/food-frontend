@@ -1,8 +1,9 @@
 "use client"
-import React, { useLayoutEffect } from 'react'
+import React from 'react'
 import Product from "@/components/admin/Product";
 
 const Admin: React.FC = () => {
+
   return (
     <Product />
   )

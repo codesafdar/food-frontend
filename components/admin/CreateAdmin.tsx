@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { FormikHelpers, useFormik, Formik } from 'formik'
+import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import ErrorField from '@/components/common/ErrorField'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
-import { adminLogin, createAdminAction } from '@/redux/actions'
-import ShowToast from '@/components/common/ShowToast'
-import { resetToast } from '@/redux/slices/adminSlice'
+import { createAdminAction } from '@/redux/actions'
 import { TailSpin } from 'react-loader-spinner'
-import { useRouter } from 'next/router'
 
 interface IToken {
   role: string
@@ -39,26 +36,19 @@ const validationSchema = Yup.object({
 
 const CreateAdmin = () => {
   const dispatch = useAppDispatch()
-  const { isError, isLoading, isSuccess, errormessage } = useAppSelector(state => state.admin)
+  const { isError, isLoading, isSuccess, adminData } = useAppSelector(state => state.admin)
 
-  const [token, setToken] = useState<IToken>({
-    role: '',
-    token: ''
-  })
+  const [role, setRole] = useState<string>('')
 
-  const handleFormSubmit = (values: ICreateAdmin, { resetForm }: { resetForm: () => void }) => {
+  const handleFormSubmit = async (values: ICreateAdmin) => {
     try {
       dispatch(createAdminAction(values))
-      if (isSuccess) {
-        resetForm()
-      }
     } catch (error) {
       console.log(error)
     }
-
   }
 
-  const { values, errors, touched, handleChange, handleSubmit, handleBlur } = useFormik({
+  const { values, errors, touched, handleChange, handleSubmit, handleBlur, resetForm } = useFormik({
     initialValues,
     enableReinitialize: true,
     validationSchema,
@@ -66,37 +56,27 @@ const CreateAdmin = () => {
   })
 
   useEffect(() => {
-    const adminToken = JSON.parse(localStorage.getItem('token') || '')
-    setToken(adminToken)
+    const adminRole = JSON.parse(localStorage.getItem('role') || '')
+    setRole(adminRole)
   }, [])
-  
-  useEffect(() => {
-    const delayReset = setTimeout(() => {
-      dispatch(resetToast())
-    }, 5000)
-    return () => clearTimeout(delayReset)
-  }, [isError])
-  // useEffect(()=>{
-  //   console.log("🚀 ~ file: CreateAdmin.tsx:76 ~ CreateAdmin ~ isSuccess:", isSuccess)
 
-  // },[isSuccess,isError])
+  useEffect(() => {
+    if (isSuccess) {
+      resetForm()
+    }
+  }, [isSuccess])
+
 
   return (
     <div>
       {
-        token && token.role !== 'superAdmin'
+        role && role !== 'superAdmin'
           ?
           <div className='text-red-500 text-center mt-6'>
             You are not authorized to access this page
           </div>
           :
           <form onSubmit={handleSubmit}>
-            {
-              isSuccess && <ShowToast message='Admin created successfully' type='success' />
-            }
-            {
-            (isError && errormessage) && <ShowToast message={errormessage} type='error' />
-            }
             <div className="w-1/2 text-center ml-auto mr-auto  mt-5 space-y-6 flex flex-col justify-center">
               <div className='text-xl font-bold'>
                 Create Admin
@@ -109,7 +89,6 @@ const CreateAdmin = () => {
                   onChange={handleChange}
                   value={values.fName}
                   onBlur={handleBlur}
-                  disabled={isLoading || isError}
                 />
                 {
                   (errors.fName && touched.fName) &&
@@ -124,7 +103,6 @@ const CreateAdmin = () => {
                   onChange={handleChange}
                   value={values.lName}
                   onBlur={handleBlur}
-                  disabled={isLoading || isError}
                 />
                 {
                   (errors.lName && touched.lName) &&
@@ -139,7 +117,6 @@ const CreateAdmin = () => {
                   onChange={handleChange}
                   value={values.email}
                   onBlur={handleBlur}
-                  disabled={isLoading || isError}
                 />
                 {
                   (errors.email && touched.email) &&
@@ -154,7 +131,6 @@ const CreateAdmin = () => {
                   onChange={handleChange}
                   placeholder='Password'
                   onBlur={handleBlur}
-                  disabled={isLoading || isError}
                 />
                 {
                   (errors.password && touched.password) &&
@@ -169,7 +145,6 @@ const CreateAdmin = () => {
                   onChange={handleChange}
                   placeholder='Confirm Password'
                   onBlur={handleBlur}
-                  disabled={isLoading || isError}
                 />
                 {
                   (errors.confirmPassword && touched.confirmPassword) &&
@@ -179,7 +154,9 @@ const CreateAdmin = () => {
               {
                 isLoading
                   ?
-                  <TailSpin color='green' />
+                  <div className='mx-auto'>
+                    <TailSpin color='green' />
+                  </div>
                   :
                   <button
                     type='submit'

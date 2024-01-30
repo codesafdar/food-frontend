@@ -16,12 +16,16 @@ export default function App({ Component, pageProps }: AppProps) {
         <Component />
       </AdminLayout>
     }
+    
     else if (pathname.startsWith('/client')) {
       return <ClientLayout {...pageProps}>
         <Component />
       </ClientLayout>
     }
-    else return <AuthLayout {...pageProps}> <Component /> </AuthLayout>
+
+    else if (pathname.startsWith('/auth')) {
+      return <AuthLayout {...pageProps}> <Component /> </AuthLayout>
+    }
   }
 
   const Layout = getLayout(router.pathname)

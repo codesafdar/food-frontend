@@ -1,3 +1,4 @@
+"use client"
 import CreateAdmin from '@/components/admin/CreateAdmin'
 import React from 'react'
 

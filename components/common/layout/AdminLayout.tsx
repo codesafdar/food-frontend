@@ -1,23 +1,24 @@
 'use client'
 import React, { ReactNode, useEffect, useState } from 'react'
 import SideBar from '@/components/admin/SiderBar'
-import { store } from '@/redux/store'
-import { Provider } from 'react-redux'
 import { useRouter } from 'next/router'
 import { TailSpin } from 'react-loader-spinner'
+import ShowToast from '../ShowToast'
+import { useAppSelector } from '@/redux/hooks'
 
 interface ILayoutProps {
   children: ReactNode
 }
 
 const AdminLayout = ({ children }: ILayoutProps) => {
+  
+  const { isSuccess, isError, errormessage, successMessage } = useAppSelector(state => state.admin)
   const router = useRouter()
   const [token, setToken] = useState<null | string>('')
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const localToken = localStorage.getItem('token')
-      console.log("🚀 ~ file: AdminLayout.tsx:20 ~ useEffect ~ localToken:", localToken)
+      const localToken = localStorage.getItem('access_token')
       setToken(localToken)
       if (!localToken) {
         router.replace('/auth/admin-login')
@@ -25,8 +26,16 @@ const AdminLayout = ({ children }: ILayoutProps) => {
     }
   }, [])
 
+  
   return (
-    <Provider store={store}>
+    <>
+      {
+        isSuccess && <ShowToast message={successMessage} type='success' />
+      }
+      {
+        isError && <ShowToast message={errormessage} type='error' />
+      }
+
       {
         !token ?
           <div className='flex justify-center items-center w-full h-[100vh] bg-white'>
@@ -39,7 +48,7 @@ const AdminLayout = ({ children }: ILayoutProps) => {
             {/* <footer>Footer admin</footer> */}
           </div>
       }
-    </Provider>
+    </>
   )
 }
 

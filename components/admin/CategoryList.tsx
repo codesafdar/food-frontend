@@ -5,7 +5,7 @@ import { TailSpin } from 'react-loader-spinner'
 import { resetToast } from '@/redux/slices/adminSlice'
 import { getCategories, deleteCategory, updateCategory } from '@/redux/actions'
 import ShowToast from '@/components/common/ShowToast'
-import { ICategoryInput } from '@/pages/admin/category'
+import { ICategoryInput } from './Categories'
 
 // component
 const CategoryList = () => {
@@ -24,13 +24,6 @@ const CategoryList = () => {
     dispatch(updateCategory(data))
   }
 
-  useEffect(() => {
-    const delayReset = setTimeout(() => {
-      dispatch(resetToast())
-    }, 3000)
-    return () => clearTimeout(delayReset)
-  }, [isError, isSuccess])
-
   const handleDelete = (item: ICategoryInput) => {
     const id = item._id && item._id
     if (id) dispatch(deleteCategory(id))
@@ -39,11 +32,9 @@ const CategoryList = () => {
   return (
     <div className='mt-5 flex flex-col md:items-center'>
       <div className='text-2xl text-pink-500 border-b-2 md:w-[135px] mb-3'>CategoryList</div>
-      {isError && <ShowToast message={errormessage} type='error' />}
-      {isSuccess && <ShowToast message='Deleted successfully' type='success' />}
       {isLoading ? <TailSpin color='red' /> :
         <ol className='mb-2 md:ml-4 list-decimal border-red-700 w-1/3'>
-          {categoryList.length && categoryList?.map((item, index) => {
+          {categoryList.length > 0 && categoryList?.map((item, index) => {
             return (
               <div
                 key={index}

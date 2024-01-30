@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { IOptionType, InputFields } from "@/pages/admin/options";
+import { IOptionType, InputFields } from "@/components/admin/OptionsAdmin";
 import { addCategory, getCategories, deleteCategory, updateCategory, addOption, getOptions, deleteOption, updateOption, addProduct, getAllProducts, deleteProduct, updateProduct, adminLogin, createAdminAction } from "@/redux/actions";
-import { ICategoryInput } from "@/pages/admin/category";
+import { ICategoryInput } from "@/components/admin/Categories";
 import { IFormInput, initialValues } from "@/components/admin/Form";
 
 // interfaces
@@ -27,11 +27,20 @@ export interface IAdminData {
   isError: boolean
   isSuccess: boolean
   isLoading: boolean
+  successMessage: string
   errormessage: string | undefined
   productList: IFormInput[]
   isShowModal: IShowModal
   getOneProductData: IFormInput
-  adminToken: string
+  adminData: {
+    access_token: string
+    refresh_token: string
+    email: string
+    fName: string
+    lName: string
+    role: string
+    _id: string
+  }
 }
 
 const initialState: IAdminData = {
@@ -43,6 +52,7 @@ const initialState: IAdminData = {
   isError: false,
   isSuccess: false,
   isLoading: false,
+  successMessage: '',
   errormessage: '',
   productList: [],
   isShowModal: {
@@ -51,7 +61,15 @@ const initialState: IAdminData = {
     id: ''
   },
   getOneProductData: initialValues,
-  adminToken: ''
+  adminData: {
+    access_token: '',
+    refresh_token: '',
+    email: '',
+    fName: '',
+    lName: '',
+    role: '',
+    _id: '',
+  }
 }
 
 const adminSlice = createSlice({
@@ -86,7 +104,7 @@ const adminSlice = createSlice({
       state.productOptionData = payload.optionsList
     },
     removeToken: (state) => {
-      state.adminToken = ''
+      state.adminData.access_token = ''
     }
   },
   extraReducers: (builder) => {
@@ -95,6 +113,8 @@ const adminSlice = createSlice({
       // add category
       .addCase(addCategory.fulfilled, (state, { payload }) => {
         state.isLoading = false
+        state.isSuccess = false
+        state.isError = false
         if (payload.isUpdate) {
           const index = state.categoryList.findIndex((item) => item._id === payload._id)
           if (index) state.categoryList.splice(index, 1, payload)
@@ -117,6 +137,8 @@ const adminSlice = createSlice({
       // get all categories
       .addCase(getCategories.pending, (state) => {
         state.isLoading = true
+        state.isSuccess = false
+        state.isError = false
       })
       .addCase(getCategories.fulfilled, (state, { payload }) => {
         state.isLoading = false
@@ -131,10 +153,12 @@ const adminSlice = createSlice({
       // delete category
       .addCase(deleteCategory.pending, (state) => {
         state.isSuccess = false
+        state.isError = false
         state.isLoading = true
       })
       .addCase(deleteCategory.fulfilled, (state, { payload }) => {
         state.isSuccess = true
+        state.successMessage = 'Deleted successfully'
         state.isLoading = false
         state.categoryList = state.categoryList.filter((item) => item._id !== payload?._id)
       })
@@ -160,6 +184,8 @@ const adminSlice = createSlice({
       })
 
       // option
+
+
       // add 
       .addCase(addOption.pending, (state) => {
         state.isLoading = true
@@ -178,6 +204,8 @@ const adminSlice = createSlice({
       // get
       .addCase(getOptions.pending, state => {
         state.isLoading = true
+        state.isSuccess = false
+        state.isError = false
       })
       .addCase(getOptions.fulfilled, (state, { payload }) => {
         state.isLoading = false
@@ -192,10 +220,13 @@ const adminSlice = createSlice({
       // delete option
       .addCase(deleteOption.pending, state => {
         state.isLoading = true
+        state.isSuccess = false
+        state.isError = false
       })
       .addCase(deleteOption.fulfilled, (state, { payload }) => {
         state.isLoading = false
         state.isSuccess = true
+        state.successMessage = 'Deleted successfully'
         state.optionsList = state.optionsList.filter((item) => item._id !== payload._id)
       })
       .addCase(deleteOption.rejected, (state, { payload }) => {
@@ -218,6 +249,8 @@ const adminSlice = createSlice({
       })
 
       // product
+
+
       // add
       .addCase(addProduct.pending, state => {
         state.isLoading = true
@@ -235,6 +268,8 @@ const adminSlice = createSlice({
       // get products
       .addCase(getAllProducts.pending, state => {
         state.isLoading = true
+        state.isSuccess = false
+        state.isError = false
       })
       .addCase(getAllProducts.fulfilled, (state, { payload }) => {
         state.isLoading = false
@@ -279,11 +314,14 @@ const adminSlice = createSlice({
       // admin login
       .addCase(adminLogin.pending, state => {
         state.isLoading = true
+        state.isSuccess = false
+        state.isError = false
       })
       .addCase(adminLogin.fulfilled, (state, { payload }) => {
         state.isLoading = false
         state.isSuccess = true
-        state.adminToken = payload
+        state.successMessage = 'Logged in successfully'
+        state.adminData = payload
       })
       .addCase(adminLogin.rejected, (state, { payload }) => {
         state.isLoading = false
@@ -294,10 +332,13 @@ const adminSlice = createSlice({
       // create admin
       .addCase(createAdminAction.pending, state => {
         state.isLoading = true
+        state.isSuccess = false
+        state.isError = false
       })
-      .addCase(createAdminAction.fulfilled, (state, { payload }) => {
+      .addCase(createAdminAction.fulfilled, state => {
         state.isLoading = false
         state.isSuccess = true
+        state.successMessage = 'Admin created successfully'
       })
       .addCase(createAdminAction.rejected, (state, { payload }) => {
         state.isLoading = false

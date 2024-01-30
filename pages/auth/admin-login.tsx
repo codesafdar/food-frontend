@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { FormikHelpers, useFormik, Formik } from 'formik'
+import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import ErrorField from '@/components/common/ErrorField'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { adminLogin } from '@/redux/actions'
-import ShowToast from '@/components/common/ShowToast'
-import { resetToast } from '@/redux/slices/adminSlice'
 import { TailSpin } from 'react-loader-spinner'
 import { useRouter } from 'next/router'
+import { resetToast } from '@/redux/slices/adminSlice'
 
 
 export interface IAdminLogin {
@@ -30,7 +29,7 @@ const Login: React.FC = () => {
   const router = useRouter()
   const [token, setToken] = useState<null | string>('')
 
-  const { isError, errormessage, isLoading, isSuccess } = useAppSelector(state => state.admin)
+  const { isSuccess } = useAppSelector(state => state.admin)
 
   const handleFormSubmit = (values: IAdminLogin, { resetForm }: { resetForm: () => void }) => {
 
@@ -39,7 +38,6 @@ const Login: React.FC = () => {
       if (isSuccess) {
         resetForm()
       }
-
     } catch (err) {
       console.log(err)
     }
@@ -48,6 +46,7 @@ const Login: React.FC = () => {
   useEffect(() => {
     if (isSuccess) {
       router.replace('/admin')
+      dispatch(resetToast())
     }
   }, [isSuccess])
 
@@ -59,18 +58,11 @@ const Login: React.FC = () => {
   })
 
   useEffect(() => {
-    const delayReset = setTimeout(() => {
-      dispatch(resetToast())
-    }, 5000)
-    return () => clearTimeout(delayReset)
-  }, [isError])
-
-  useEffect(() => {
     if (typeof window !== 'undefined') {
-      const localToken = localStorage.getItem('token')
+      const localToken = JSON.parse(localStorage.getItem('access_token') || '{}')
       setToken(localToken)
       if (localToken) {
-        router.replace('/admin')
+        // router.replace('/admin')
       }
     }
   }, [router])
@@ -78,13 +70,12 @@ const Login: React.FC = () => {
   return (
     <>
       {
-        token ?
+        !token ?
           <div className='flex justify-center items-center w-full h-[100vh] bg-white'>
             <TailSpin color='green' />
           </div>
           :
           <section id='login' className="pt-6 md:pt-10 px-4 max-h-full">
-            {isError && <ShowToast message={errormessage} type='error' />}
             <form onSubmit={handleSubmit} className=''>
               <div className="font-bold text-[42px] md:text-[52px] text-center text-pink-600 mb-2">
                 Cheezious
@@ -102,7 +93,6 @@ const Login: React.FC = () => {
                       onChange={handleChange}
                       value={values.email}
                       onBlur={handleBlur}
-                      disabled={isLoading || isError}
                     />
                     {
                       (errors.email && touched.email) &&
@@ -117,7 +107,6 @@ const Login: React.FC = () => {
                       onChange={handleChange}
                       placeholder='Password'
                       onBlur={handleBlur}
-                      disabled={isLoading || isError}
                     />
                     {
                       (errors.password && touched.password) &&
@@ -126,7 +115,6 @@ const Login: React.FC = () => {
                   </div>
                   <button
                     type='submit'
-                    disabled={isLoading || isError}
                     className="bg-blue-600 rounded-lg w-full py-3 text-center text-xl font-semibold text-white">
                     Log in
                   </button>

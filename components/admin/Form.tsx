@@ -5,7 +5,7 @@ import Image from "next/image";
 
 // components
 import Modal from "./Modal";
-import { IproductOptionData, setProductData } from "@/redux/slices/adminSlice";
+import { IproductOptionData } from "@/redux/slices/adminSlice";
 
 // redux
 import { useAppSelector, useAppDispatch } from "@/redux/hooks";
@@ -142,7 +142,7 @@ const Form = () => {
                 className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
                 <option value='' className="text-gray-700">Please select category</option>
                 {
-                  categoryList.map((item, index) => {
+                categoryList?.length &&  categoryList.map((item, index) => {
                     return (
                       <option value={item.category} key={index}>{item.category}</option>
                     )

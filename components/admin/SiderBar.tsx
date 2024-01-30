@@ -6,20 +6,21 @@ import { useRouter } from "next/router";
 
 
 const SideBar = () => {
-  const [adminToken, setAdminToken] = useState<null | string>('')
+  const [adminRole, setAdminRole] = useState<string>('')
   const dispatch = useAppDispatch()
   const router = useRouter()
+
   const handleLogout = () => {
     dispatch(resetToast())
-    localStorage.removeItem('token')
+    localStorage.clear()
   }
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const { role } = JSON.parse(localStorage.getItem('token') || '')
+    if (typeof window !== 'undefined') { 
+      const role: string = JSON.parse(localStorage.getItem('role') || '')
       if (role !== 'superAdmin') {
         router.replace('/admin')
       }
-      setAdminToken(role)
+      setAdminRole(role)
     }
   }, [])
 
@@ -36,18 +37,26 @@ const SideBar = () => {
           />
         </div>
         <nav className="flex flex-1 flex-col gap-y-4 pt-10">
-          <Link href='/admin' className="text-lg text-red-600">
+          <Link
+            href='/admin'
+            className="text-lg text-red-600 cursor-pointer">
             Products
           </Link>
-          <Link href='/admin/category' className="text-lg text-red-600">
+          <Link
+            href='/admin/category'
+            className="text-lg text-red-600 cursor-pointer">
             Categories
           </Link>
-          <Link href='/admin/options' className="text-lg text-red-600">
+          <Link
+            href='/admin/options'
+            className="text-lg text-red-600 cursor-pointer">
             Options
           </Link>
           {
-            adminToken === 'superAdmin' &&
-            <Link href='/admin/create-admin' className="text-lg text-red-600">
+            adminRole === 'superAdmin' &&
+            <Link
+              href='/admin/create-admin'
+              className="text-lg text-red-600 cursor-pointer">
               Create Admin
             </Link>
           }
@@ -55,7 +64,7 @@ const SideBar = () => {
         <Link
           href='/auth/admin-login'
           onClick={() => handleLogout()}
-          className="text-lg text-red-600">
+          className="text-lg text-red-600 cursor-pointer mb-2">
           Logout
         </Link>
       </div>
