@@ -8,7 +8,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
 
-    const accessToken = localStorage.getItem("access_token") && JSON.parse(localStorage.getItem("access_token") || '')
+    const accessToken = localStorage.getItem("access_token")
     if (accessToken) {
       config.headers["Authorization"] = "Bearer " + accessToken;
     }
@@ -27,10 +27,10 @@ axiosInstance.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
-    let refreshToken = JSON.parse(localStorage.getItem("refresh_token") || '')
+    let refreshToken = localStorage.getItem("refresh_token")
 
-    if (refreshToken && error.response.status === 401 && !originalRequest._retry
-      && originalRequest.url !== 'auth/admin-login') {
+    if (refreshToken && error.response.status === 401 && !originalRequest._retry)
+     {
 
       originalRequest._retry = true;
       try {
@@ -42,18 +42,17 @@ axiosInstance.interceptors.response.use(
             if (res.status === 201) {
 
               const response = res.data
-              localStorage.setItem("access_token", JSON.stringify(response.access_token))
-              localStorage.setItem("refresh_token", JSON.stringify(response.refresh_token))
+              localStorage.setItem("access_token", (response.access_token))
+              localStorage.setItem("refresh_token", (response.refresh_token))
 
               return axiosInstance(originalRequest)
             }
           });
       }
       catch (_error) {
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
-        window.location.href = `${process.env.NEXT_PUBLIC_NEXT_BASE_URL}auth/admin-login`;
-        return Promise.reject(_error);
+        localStorage.clear()
+        window.location.href = `${process.env.NEXT_PUBLIC_NEXT_BASE_URL}auth/admin-login`
+        return Promise.reject(_error)
       }
 
     }

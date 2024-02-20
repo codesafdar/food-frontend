@@ -8,20 +8,18 @@ interface IAuthProps {
 }
 
 const AuthLayout: React.FC<IAuthProps> = ({ children }) => {
-  const { isSuccess, isError, errormessage, successMessage } = useAppSelector(state => state.admin)
+  // const { isSuccess, isError, errormessage, successMessage } = useAppSelector(state => state.admin)
 
   return (
     <>
-      {
+      {/* {
         isSuccess && <ShowToast message={successMessage} type='success' />
       }
       {
         isError && <ShowToast message={errormessage} type='error' />
-      }
-
+      } */}
       <div className='h-[100vh] bg-black'>{children}</div>
     </>
-
   )
 }
 

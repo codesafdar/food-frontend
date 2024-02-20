@@ -1,14 +1,19 @@
-import React, { useEffect } from 'react'
+'use client'
+import React, { useEffect, useState } from 'react'
 import { useAppSelector, useAppDispatch } from '@/redux/hooks'
 import { getAllProducts, deleteProduct } from '@/redux/actions'
-import { TailSpin } from 'react-loader-spinner'
-import { Oval } from 'react-loader-spinner'
-import Image from 'next/image'
-import { setIsShowModal, setProductData } from '@/redux/slices/adminSlice'
+import { TailSpin, Oval } from 'react-loader-spinner'
+import SelectedOptionsTable from './SelectedOptionsTable'
+import { setProductData } from '@/redux/slices/adminSlice'
 import { IFormInput } from './Form'
+import Modal from './Modal'
+import Image from 'next/image'
 
 const ProductTable = () => {
-  const { productList, getOneProductData, isLoading } = useAppSelector(state => state.admin)
+  const { productList, isLoading } = useAppSelector(state => state.admin)
+  const [showImg, setShowImg] = useState('')
+  const [showModal, setShowModal] = useState(false)
+  const [optionID, setOptionID] = useState<string | undefined>('')
   const dispatch = useAppDispatch()
 
   const handleDelete = (id: string | undefined) => {
@@ -19,12 +24,40 @@ const ProductTable = () => {
     dispatch(setProductData(item))
   }
 
+  const handleImage = (item: IFormInput) => {
+    setOptionID('')
+    setShowImg(item.image)
+    setShowModal(true)
+  }
+  const handleOptionsList = (id: string | undefined) => {
+    setShowModal(true)
+    setOptionID(id)
+  }
+
   useEffect(() => {
     dispatch(getAllProducts())
   }, [])
 
   return (
     <div className="ml-auto mr-auto">
+      <Modal
+        showModal={showModal}
+        setShowModal={setShowModal}
+      >
+        {
+          !!optionID ?
+            <div className='bg-white px-4 p-5 pb-4'>
+              <SelectedOptionsTable id={optionID} />
+            </div>
+            :
+            <Image
+              src={showImg}
+              alt='image'
+              width={600}
+              height={600} />
+        }
+      </Modal>
+
       {
         isLoading ?
           <Oval
@@ -63,10 +96,7 @@ const ProductTable = () => {
                           item.image ?
                             <Image
                               src={item.image}
-                              onClick={() => dispatch(setIsShowModal({
-                                isShow: true,
-                                showImage: item.image
-                              }))}
+                              onClick={() => handleImage(item)}
                               className='cursor-pointer'
                               alt='image'
                               width={100}
@@ -76,10 +106,7 @@ const ProductTable = () => {
                       </td>
                       <td className="border px-4 py-4">
                         <button
-                          onClick={() => dispatch(setIsShowModal({
-                            isShow: true,
-                            id: item._id
-                          }))}
+                          onClick={() => handleOptionsList(item?._id)}
                           className='text-green-400'>Show list</button>
                       </td>
                       <td className="border px-8 py-4"

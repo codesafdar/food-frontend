@@ -33,7 +33,7 @@ const ShowToast = ({ type, message }: IToast) => {
 
   return (
     <>
-      <ToastContainer />
+      <ToastContainer  />
       {showToast()}
     </>
   )

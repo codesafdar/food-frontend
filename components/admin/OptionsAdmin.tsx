@@ -1,3 +1,4 @@
+'use client'
 import React, { useEffect, useState } from 'react'
 import { useFormik, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
@@ -12,13 +13,12 @@ import { FaTrash, FaEdit } from "react-icons/fa"
 
 // services
 import { TailSpin } from 'react-loader-spinner'
-import ShowToast from '@/components/common/ShowToast'
 
 export interface IOptionType {
-    option: string
-    isRequired: boolean
-    isMultiple: boolean
-    _id?: string
+  option: string
+  isRequired: boolean
+  isMultiple: boolean
+  _id?: string
 }
 
 // interface
@@ -43,7 +43,7 @@ const validationSchema = Yup.object({
 
 // component
 const OptionsAdmin = () => {
-  const { optionsList, isLoading, isError, errormessage, isSuccess } = useAppSelector(state => state.admin)
+  const { optionsList, isLoading } = useAppSelector(state => state.admin)
   const [isUpdate, setIsUpdate] = useState(false)
   const dispatch = useAppDispatch()
 
@@ -65,8 +65,6 @@ const OptionsAdmin = () => {
     dispatch(getOptions())
   }, [dispatch])
 
-
-
   const handleDelete = (id: string) => {
     dispatch(resetToast())
     dispatch(deleteOption(id))
@@ -75,6 +73,7 @@ const OptionsAdmin = () => {
     setIsUpdate(true)
     setFieldValue('optionData', item)
   }
+
   return (
     <form className='flex flex-col items-center justify-center mt-4' onSubmit={handleSubmit}>
       <div className='text-2xl font-bold text-gray-600'>Add Option</div>
@@ -120,7 +119,7 @@ const OptionsAdmin = () => {
         <div className="border-b-2 border-gray-500 ml-auto mr-auto w-14"></div>
         {isLoading ?
           <div className='ml-auto mr-auto pt-2'>
-            <TailSpin color='red' />
+            <TailSpin color='green' />
           </div>
           :
           <ol className='list-decimal ml-auto mr-auto w-1/2 mt-2'>

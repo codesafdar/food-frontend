@@ -1,19 +1,18 @@
 'use client'
 import React, { ReactNode, useEffect, useState } from 'react'
 import SideBar from '@/components/admin/SiderBar'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { TailSpin } from 'react-loader-spinner'
-import ShowToast from '../ShowToast'
-import { useAppSelector } from '@/redux/hooks'
+
 
 interface ILayoutProps {
   children: ReactNode
 }
 
 const AdminLayout = ({ children }: ILayoutProps) => {
-  
-  const { isSuccess, isError, errormessage, successMessage } = useAppSelector(state => state.admin)
+
   const router = useRouter()
+
   const [token, setToken] = useState<null | string>('')
 
   useEffect(() => {
@@ -26,16 +25,8 @@ const AdminLayout = ({ children }: ILayoutProps) => {
     }
   }, [])
 
-  
   return (
     <>
-      {
-        isSuccess && <ShowToast message={successMessage} type='success' />
-      }
-      {
-        isError && <ShowToast message={errormessage} type='error' />
-      }
-
       {
         !token ?
           <div className='flex justify-center items-center w-full h-[100vh] bg-white'>

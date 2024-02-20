@@ -1,8 +1,9 @@
+'use client'
 import React, { useEffect, useState } from "react";
 import Link from 'next/link'
 import { useAppDispatch } from "@/redux/hooks";
 import { resetToast } from "@/redux/slices/adminSlice";
-import { useRouter } from "next/router";
+import { useRouter } from 'next/navigation'
 
 
 const SideBar = () => {
@@ -10,14 +11,16 @@ const SideBar = () => {
   const dispatch = useAppDispatch()
   const router = useRouter()
 
+  // logout
   const handleLogout = () => {
     dispatch(resetToast())
     localStorage.clear()
   }
+
   useEffect(() => {
-    if (typeof window !== 'undefined') { 
-      const role: string = JSON.parse(localStorage.getItem('role') || '')
-      if (role !== 'superAdmin') {
+    if (typeof window !== 'undefined') {
+      const role: string = localStorage.getItem('role') || ''
+      if (role !== 'super_admin') {
         router.replace('/admin')
       }
       setAdminRole(role)
@@ -38,7 +41,7 @@ const SideBar = () => {
         </div>
         <nav className="flex flex-1 flex-col gap-y-4 pt-10">
           <Link
-            href='/admin'
+            href='/admin/products'
             className="text-lg text-red-600 cursor-pointer">
             Products
           </Link>
@@ -53,12 +56,19 @@ const SideBar = () => {
             Options
           </Link>
           {
-            adminRole === 'superAdmin' &&
-            <Link
-              href='/admin/create-admin'
-              className="text-lg text-red-600 cursor-pointer">
-              Create Admin
-            </Link>
+            adminRole === 'super_admin' &&
+            <>
+              <Link
+                href='/admin/create-admin'
+                className="text-lg text-red-600 cursor-pointer">
+                Create Admin
+              </Link>
+              <Link
+                href='/admin/users'
+                className="text-lg text-red-600 cursor-pointer">
+                Users
+              </Link>
+            </>
           }
         </nav>
         <Link

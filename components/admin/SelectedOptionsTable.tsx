@@ -1,18 +1,19 @@
+'use client'
 import React, { useEffect } from 'react'
 import { useAppSelector, useAppDispatch } from '@/redux/hooks'
 import { FaTrash } from 'react-icons/fa'
 import { deleteProductOption } from '@/redux/slices/adminSlice'
 
-const SelectedOptionsTable = () => {
+const SelectedOptionsTable = ({ id }: any) => {
   const dispatch = useAppDispatch()
-  const { productOptionData, isShowModal, productList } = useAppSelector(state => state.admin)
+  const { productOptionData, productList } = useAppSelector(state => state.admin)
   useEffect(() => {
   }, [productList])
 
   return (
     <div>
       {
-        (productOptionData.length > 0 || (productList.length > 0 && isShowModal.id)) &&
+        (productOptionData.length > 0 || (productList.length > 0 && !!id)) &&
         <div className="">
           <table className="w-full shadow-lg bg-white border-collapse">
             <thead>
@@ -20,7 +21,7 @@ const SelectedOptionsTable = () => {
                 <th className='tableHeading'>Type</th>
                 <th className='tableHeading'>Title</th>
                 <th className='tableHeading'>Price</th>
-                {!isShowModal.id &&
+                {!id &&
                   <th className='tableHeading'>Action</th>
                 }
               </tr>
@@ -28,7 +29,7 @@ const SelectedOptionsTable = () => {
             <tbody>
 
               {
-                !isShowModal.id &&
+                !id &&
                 productOptionData.map((item, index) => {
                   return (
                     <tr key={index}>
@@ -44,13 +45,13 @@ const SelectedOptionsTable = () => {
                 })
               }
 
-              {
-                productList?.map((item, index) => {
-                  if (isShowModal.id === item._id) {
+              {productList.length > 0 &&
+                productList.map((item) => {
+                  if (id === item._id) {
                     const { optionsList } = item
                     return (
                       <React.Fragment key={item._id}>
-                        {
+                        {optionsList?.length ?
                           optionsList?.map((option, index) => {
                             return (
                               <tr key={index}>
@@ -60,6 +61,7 @@ const SelectedOptionsTable = () => {
                               </tr>
                             )
                           })
+                          : <div className='text-red-600 text-center'>Data not found</div>
                         }
                       </React.Fragment>
                     )

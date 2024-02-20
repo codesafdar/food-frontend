@@ -2,9 +2,10 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { ICategoryInput } from "@/components/admin/Categories";
 import { InputFields } from "@/components/admin/OptionsAdmin";
 import { IFormInput } from "@/components/admin/Form";
-import { IAdminLogin } from "@/pages/auth/admin-login";
+import { IAdminLogin } from "@/app/auth/admin-login/page";
 import { ICreateAdmin } from "@/components/admin/CreateAdmin";
 import axiosInstance from "@/services/axiosInterceptorInstance";
+import { resetToast } from "@/redux/slices/adminSlice";
 
 // category
 export const addCategory = createAsyncThunk(
@@ -203,21 +204,19 @@ export const adminLogin = createAsyncThunk(
   'admin/login', async (data: IAdminLogin, thunkAPI) => {
     try {
       const res = await axiosInstance.post(`${process.env.NEXT_PUBLIC_BASE_URL}admin/login`, { username: data.email, password: data.password })
-      console.log("🚀 ~ file: index.ts:208 ~ 'admin/login', ~ res:", res)
 
       if (res.status === 201) {
         const data = res.data
-       await localStorage.setItem('access_token', JSON.stringify(data.access_token))
-       await localStorage.setItem('refresh_token', JSON.stringify(data.refresh_token))
-       await localStorage.setItem('role', JSON.stringify(data.role))
-
+        localStorage.setItem('access_token', (data.access_token))
+        localStorage.setItem('refresh_token', (data.refresh_token))
+        localStorage.setItem('role', (data.role))
         return data
       }
       else return thunkAPI.rejectWithValue('Went something wrong')
     }
     catch (err: any) {
-      console.log("🚀 ~ file: index.ts:218 ~ 'admin/login', ~ err:", err)
-      return thunkAPI.rejectWithValue(err.response.data.message)
+      if (err.response.data.message) return thunkAPI.rejectWithValue(err.response.data.message)
+      return thunkAPI.rejectWithValue(err.message)
     }
   }
 )
@@ -226,12 +225,7 @@ export const adminLogin = createAsyncThunk(
 export const createAdminAction = createAsyncThunk(
   'createAdmin', async (data: ICreateAdmin, thunkAPI) => {
     try {
-      const { token } = JSON.parse(localStorage.getItem('access_token') || '')
-      const config = {
-        headers: { Authorization: `${token}` }
-      };
-
-      const response = await axiosInstance.post(`${process.env.NEXT_PUBLIC_BASE_URL}admin/create-admin`, data, config)
+      const response = await axiosInstance.post(`${process.env.NEXT_PUBLIC_BASE_URL}admin/create-admin`, data)
       if (response.status === 201) {
         return response.data
       }
@@ -239,6 +233,59 @@ export const createAdminAction = createAsyncThunk(
 
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response.data.message)
+    }
+  }
+)
+
+// getall products
+export const getAllUsers = createAsyncThunk(
+  'users/get', async (args, thunkAPI) => {
+    try {
+      const get = await axiosInstance(`${process.env.NEXT_PUBLIC_BASE_URL}admin/get-users`)
+
+      if (get.status === 200) return get.data
+      else return thunkAPI.rejectWithValue(get.data)
+    }
+    catch (err: any) {
+      return thunkAPI.rejectWithValue(err.response.data.message)
+    }
+  }
+)
+
+// delete admin
+export const deleteAdmin = createAsyncThunk(
+  'admin/delete', async (id: string, thunkAPI) => {
+    try {
+      const res = await axiosInstance.delete(`${process.env.NEXT_PUBLIC_BASE_URL}admin/${id}`)
+      if (res.status === 200) {
+        thunkAPI.dispatch(getAllUsers())
+        return res.data
+      }
+      else return thunkAPI.rejectWithValue(res.data)
+    }
+    catch (err: any) {
+      return thunkAPI.rejectWithValue(err.response.data.message)
+    }
+    // finally {
+    //   thunkAPI.dispatch(resetToast())
+    // }
+  }
+)
+
+// update admin role
+export const updateAdmin = createAsyncThunk(
+  'admin/role', async (data: ICreateAdmin, thunkAPI) => {
+    try {
+      const res = await axiosInstance.put(`${process.env.NEXT_PUBLIC_BASE_URL}admin/${data?._id}`, data)
+      if (res.status === 200) {
+        thunkAPI.dispatch(getAllUsers())
+
+        return res.data
+      }
+      else return thunkAPI.rejectWithValue(res.data)
+    }
+    catch (err: any) {
+      return thunkAPI.rejectWithValue(err.response.data.message)
     }
   }
 )

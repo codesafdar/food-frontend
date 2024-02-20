@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { IOptionType, InputFields } from "@/components/admin/OptionsAdmin";
-import { addCategory, getCategories, deleteCategory, updateCategory, addOption, getOptions, deleteOption, updateOption, addProduct, getAllProducts, deleteProduct, updateProduct, adminLogin, createAdminAction } from "@/redux/actions";
+import { addCategory, getCategories, deleteCategory, updateCategory, addOption, getOptions, deleteOption, updateOption, addProduct, getAllProducts, deleteProduct, updateProduct, adminLogin, createAdminAction, getAllUsers, deleteAdmin, updateAdmin } from "@/redux/actions";
 import { ICategoryInput } from "@/components/admin/Categories";
 import { IFormInput, initialValues } from "@/components/admin/Form";
 
@@ -32,15 +32,18 @@ export interface IAdminData {
   productList: IFormInput[]
   isShowModal: IShowModal
   getOneProductData: IFormInput
-  adminData: {
-    access_token: string
-    refresh_token: string
-    email: string
-    fName: string
-    lName: string
-    role: string
-    _id: string
-  }
+  adminData: adminData
+  users: []
+}
+
+export interface adminData {
+  access_token: string
+  refresh_token: string
+  email: string
+  fName: string
+  lName: string
+  role: string
+  _id: string
 }
 
 const initialState: IAdminData = {
@@ -69,7 +72,8 @@ const initialState: IAdminData = {
     lName: '',
     role: '',
     _id: '',
-  }
+  },
+  users: []
 }
 
 const adminSlice = createSlice({
@@ -80,6 +84,8 @@ const adminSlice = createSlice({
     resetToast: state => {
       state.isError = false
       state.isSuccess = false
+      state.successMessage = ''
+      console.log("🚀 ~ state.successMessage:resettaost>>>>>>>>", state.isSuccess)
       state.errormessage = ''
     },
 
@@ -105,7 +111,11 @@ const adminSlice = createSlice({
     },
     removeToken: (state) => {
       state.adminData.access_token = ''
+    },
+    setUsers:(state, {payload})=>{
+5
     }
+
   },
   extraReducers: (builder) => {
     builder
@@ -201,7 +211,7 @@ const adminSlice = createSlice({
         state.errormessage = payload as string
       })
 
-      // get
+      // get all
       .addCase(getOptions.pending, state => {
         state.isLoading = true
         state.isSuccess = false
@@ -248,10 +258,10 @@ const adminSlice = createSlice({
         state.errormessage = payload as string
       })
 
-      // product
+      // products
 
 
-      // add
+      // add product
       .addCase(addProduct.pending, state => {
         state.isLoading = true
       })
@@ -329,6 +339,8 @@ const adminSlice = createSlice({
         state.errormessage = payload as string
       })
 
+
+
       // create admin
       .addCase(createAdminAction.pending, state => {
         state.isLoading = true
@@ -341,6 +353,55 @@ const adminSlice = createSlice({
         state.successMessage = 'Admin created successfully'
       })
       .addCase(createAdminAction.rejected, (state, { payload }) => {
+        state.isLoading = false
+        state.isError = true
+        state.errormessage = payload as string
+      })
+
+      // get all users
+      .addCase(getAllUsers.pending, state => {
+        state.isLoading = true
+        state.isSuccess = false
+        state.isError = false
+      })
+      .addCase(getAllUsers.fulfilled, (state, { payload }) => {
+        state.isLoading = false
+        state.isError = false
+        state.users = payload
+      })
+      .addCase(getAllUsers.rejected, (state, { payload }) => {
+        state.isError = true
+        state.isLoading = false
+        state.errormessage = payload as string
+      })
+
+      // delete admin
+      .addCase(deleteAdmin.pending, state => {
+        state.isLoading = true
+      })
+      .addCase(deleteAdmin.fulfilled, state => {
+        state.isLoading = false
+        state.isSuccess = true
+        state.successMessage = 'User deleted successfully'
+      })
+      .addCase(deleteAdmin.rejected, (state, { payload }) => {
+        state.isLoading = false
+        state.isError = true
+        state.errormessage = payload as string
+      })
+
+      // update admin
+      .addCase(updateAdmin.pending, state => {
+        state.isLoading = true
+        state.isSuccess = false
+      })
+      .addCase(updateAdmin.fulfilled, state => {
+        state.isLoading = false
+        state.isSuccess = true
+        console.log("🚀 ~ state.isSuccess:", state.isSuccess)
+        state.successMessage = 'User updated successfully'
+      })
+      .addCase(updateAdmin.rejected, (state, { payload }) => {
         state.isLoading = false
         state.isError = true
         state.errormessage = payload as string

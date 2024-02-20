@@ -1,3 +1,4 @@
+'use client'
 import { useState, useEffect } from "react";
 import { useFormik, FormikHelpers } from "formik";
 import * as Yup from 'yup'
@@ -10,7 +11,7 @@ import { IproductOptionData } from "@/redux/slices/adminSlice";
 // redux
 import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import { getCategories, getOptions, addProduct, updateProduct } from "@/redux/actions";
-import { resetOptionData, setIsShowModal } from "@/redux/slices/adminSlice";
+import { resetOptionData, setIsShowModal, setOptions } from "@/redux/slices/adminSlice";
 
 // icons
 import { TiDeleteOutline } from "react-icons/ti";
@@ -49,6 +50,7 @@ export const initialValues: IFormInput = {
 const Form = () => {
   const [randomString, setRandomString] = useState<number>(0)
   const [showImage, setShowImage] = useState<string>('')
+  const [showModal, setShowModal] = useState(false)
   const dispatch = useAppDispatch()
   const { optionsList, categoryList, productOptionData, getOneProductData, isShowModal } = useAppSelector(state => state.admin)
 
@@ -106,9 +108,31 @@ const Form = () => {
     setFieldValue('image', '')
   }
 
+  const submitOptionData = async () => {
+    try {
+      const { optionObj: { optionType, itemPrice, itemName } } = values
+      const parsedOption = await JSON.parse(optionType)
+      const data = { optionType: parsedOption, itemName, itemPrice }
+      dispatch(setOptions(data))
+    }
+    catch (err) {
+      console.log(err)
+    }
+    finally {
+      if (setFieldValue) {
+        setFieldValue('optionObj', {
+          itemName: '',
+          itemPrice: '',
+          optionType: ''
+        })
+      }
+      setIsShowModal(false)
+    }
+  }
+
   useEffect(() => {
-    if (values?.optionObj?.optionType) dispatch(setIsShowModal({ isShow: true }))
-    else dispatch(setIsShowModal({ isShow: false }))
+    if (values?.optionObj?.optionType) setShowModal(true)
+    else setShowModal(false)
   }, [values?.optionObj?.optionType])
 
   useEffect(() => {
@@ -130,7 +154,7 @@ const Form = () => {
     <>
       <form className="w-full text-center" onSubmit={handleSubmit}>
         <div className="flex flex-wrap -mx-3 mb-6">
-          <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
               category
             </label>
@@ -142,7 +166,7 @@ const Form = () => {
                 className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
                 <option value='' className="text-gray-700">Please select category</option>
                 {
-                categoryList?.length &&  categoryList.map((item, index) => {
+                  categoryList?.length && categoryList.map((item, index) => {
                     return (
                       <option value={item.category} key={index}>{item.category}</option>
                     )
@@ -161,7 +185,9 @@ const Form = () => {
             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
               Title
             </label>
-            <input onChange={handleChange} onBlur={handleBlur}
+            <input
+              onChange={handleChange}
+              onBlur={handleBlur}
               value={values.title}
               name='title'
               className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -171,26 +197,7 @@ const Form = () => {
               <div className="text-red-600 text-sm">{errors.title}</div>
             }
           </div>
-          <div className="w-full md:w-1/2 px-3">
-            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-last-name">
-              Description
-            </label>
-            <textarea onChange={handleChange} value={values.description} name='description' className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" placeholder="Delicious and favorite pizza " />
-          </div>
-          <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-city">
-              Base Price
-            </label>
-            <input onChange={handleChange} value={values.startingPrice} name='startingPrice' className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              type="number"
-              placeholder="Enter base price of item" />
-            {(touched.startingPrice && errors.startingPrice) &&
-              <div className="text-red-600 text-sm mt-2">{errors.startingPrice}</div>
-            }
-          </div>
-        </div>
-        <div className="flex flex-wrap -mx-3 mb-2">
-          <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
               Options
             </label>
@@ -201,22 +208,88 @@ const Form = () => {
                 name='optionObj.optionType'
                 className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
                 <option value="">Please choose an option</option>
-                {optionsList.map((item, index) => {
-                  return (
-                    <option value={JSON.stringify(item)} key={index}>{item?.option}</option>
-                  )
-                })}
+                {
+                  optionsList.map((item, index) => {
+                    return (
+                      <option
+                        value={JSON.stringify(item)}
+                        key={index}>
+                        {item?.option}
+                      </option>
+                    )
+                  })
+                }
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                 <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
               </div>
             </div>
+            {/* options modal */}
             <Modal
-              handleChange={handleChange}
-              values={values}
-              setFieldValue={setFieldValue}
-            />
+              showModal={showModal}
+              setShowModal={setShowModal}
+            >
+              <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                <div className="w-full px-3 mb-6 md:mb-4">
+                  <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                    Title
+                  </label>
+                  <input
+                    onChange={handleChange}
+                    value={values?.optionObj?.itemName}
+                    name='optionObj.itemName'
+                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    type="text"
+                    placeholder="Enter name of the item" />
+                </div>
+                <div className="w-full px-3 mb-6 md:mb-0">
+                  <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                    Price
+                  </label>
+                  <input
+                    onChange={handleChange}
+                    value={values?.optionObj?.itemPrice}
+                    name='optionObj.itemPrice'
+                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    type="number"
+                    placeholder="Enter price" />
+                </div>
+              </div>
+              <div className="bg-gray-50 px-4 py-3 sm:flex sm:px-6">
+                <button
+                  type="button"
+                  onClick={() => submitOptionData()}
+                  className="ml-auto mr-auto text-green-400 mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
+                  Submit
+                </button>
+              </div>
+            </Modal>
           </div>
+          <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+              Base Price
+            </label>
+            <input
+              onChange={handleChange}
+              value={values.startingPrice}
+              name='startingPrice'
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              type="number"
+              placeholder="Enter base price of item" />
+            {
+              (touched.startingPrice && errors.startingPrice) &&
+              <div className="text-red-600 text-sm mt-2">{errors.startingPrice}</div>
+            }
+          </div>
+        </div>
+        <div className="flex flex-wrap -mx-3 mb-2">
+          <div className="w-full md:w-1/2 px-3">
+            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-last-name">
+              Description
+            </label>
+            <textarea onChange={handleChange} value={values.description} name='description' className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" placeholder="Delicious and favorite pizza " />
+          </div>
+
           <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="">
               Image
@@ -245,7 +318,9 @@ const Form = () => {
             </div>
           }
         </div>
-        <button type="submit" className="justify-center appearance-none md:w-1/6 mt-8 mb-2 bg-gray-200 font-bold text-green-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+        <button
+          type="submit"
+          className="justify-center appearance-none md:w-1/6 mt-8 mb-2 bg-gray-200 font-bold text-green-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
           Submit
         </button>
         {

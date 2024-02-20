@@ -1,3 +1,4 @@
+"use client"
 import React, { useEffect } from "react";
 import { useFormik, FormikHelpers } from "formik";
 import * as Yup from 'yup'
@@ -21,7 +22,7 @@ const initialValues = {
 
 const Categories = () => {
   const dispatch = useAppDispatch()
-  const { editedCat, isError } = useAppSelector(state => state.admin)
+  const { editedCat } = useAppSelector(state => state.admin)
 
   // submit form data
   const submitFormData = (values: ICategoryInput, actions: FormikHelpers<ICategoryInput>) => {
