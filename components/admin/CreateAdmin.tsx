@@ -62,7 +62,7 @@ const validationSchema = Yup.object({
 
 const CreateAdmin = ({ isEdit = false, data, setShowModal }: IAdminProps) => {
   const dispatch = useAppDispatch()
-  const { isLoading, isSuccess, isError } = useAppSelector(state => state.admin)
+  const { isLoading, isSuccess } = useAppSelector(state => state.admin)
   const [role, setRole] = useState<string>('')
 
   const handleFormSubmit = async (values: ICreateAdmin) => {
@@ -75,10 +75,6 @@ const CreateAdmin = ({ isEdit = false, data, setShowModal }: IAdminProps) => {
       } else dispatch(createAdminAction(values))
     } catch (error) {
       console.log(error)
-    }
-    finally {
-      resetForm()
-      // dispatch(resetToast())
     }
   }
 
@@ -105,6 +101,10 @@ const CreateAdmin = ({ isEdit = false, data, setShowModal }: IAdminProps) => {
   useEffect(() => {
     dispatch(getAllUsers())
   }, [dispatch])
+
+  useEffect(() => {
+    if (isSuccess) resetForm()
+  }, [isSuccess])
 
   return (
     <div>

@@ -7,8 +7,8 @@ import { deleteProductOption } from '@/redux/slices/adminSlice'
 const SelectedOptionsTable = ({ id }: any) => {
   const dispatch = useAppDispatch()
   const { productOptionData, productList } = useAppSelector(state => state.admin)
-  useEffect(() => {
-  }, [productList])
+  // useEffect(() => {
+  // }, [productList])
 
   return (
     <div>

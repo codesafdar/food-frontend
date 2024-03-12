@@ -34,7 +34,7 @@ export interface IFormInput {
   _id?: string
 }
 
-export const initialValues: IFormInput = {
+const initialValues: IFormInput = {
   category: '',
   title: '',
   description: '',
@@ -58,7 +58,8 @@ const Form = () => {
   const validationSchema = Yup.object({
     title: Yup.string().required('Title is required'),
     category: Yup.string().required('Category is required'),
-    startingPrice: Yup.string().required('Please add starting price')
+    startingPrice: Yup.string().required('Please add starting price'),
+    image: Yup.string().required('Please select an image'),
   })
 
 
@@ -302,6 +303,10 @@ const Form = () => {
               className="appearance-none cursor-pointer block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
               type="file"
               placeholder="Select image" />
+            {
+              (touched.image && errors.image) &&
+              <div className="text-red-600 text-sm mt-1">{errors.image}</div>
+            }
           </div>
           {values.image && showImage &&
             <div className="imageShow relative">

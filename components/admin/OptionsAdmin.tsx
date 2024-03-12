@@ -63,7 +63,7 @@ const OptionsAdmin = () => {
 
   useEffect(() => {
     dispatch(getOptions())
-  }, [dispatch])
+  }, [])
 
   const handleDelete = (id: string) => {
     dispatch(resetToast())

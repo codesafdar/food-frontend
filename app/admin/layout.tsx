@@ -1,5 +1,5 @@
 'use client'
-import React, { ReactNode, useEffect, useState } from 'react'
+import React, { ReactNode, useEffect, useState, Suspense } from 'react'
 import SideBar from '@/components/admin/SiderBar'
 import { useRouter } from 'next/navigation'
 import { TailSpin } from 'react-loader-spinner'
@@ -35,7 +35,7 @@ const AdminLayout = ({ children }: ILayoutProps) => {
           :
           <div className="flex bg-gray-100 text-gray-900">
             <SideBar />
-            <div className='w-full'>{children}</div>
+              <div className='w-full'>{children}</div>
             {/* <footer>Footer admin</footer> */}
           </div>
       }

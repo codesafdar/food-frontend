@@ -37,65 +37,6 @@ const Modal = ({ children, showModal, setShowModal }: any) => {
                   <TiDeleteOutline />
                 </div>
                 {children}
-                {/* {
-                  isShowModal.id &&
-                  <div className='bg-white px-4 p-5 pb-4'>
-                    <SelectedOptionsTable />
-                  </div>
-                }
-
-                {
-                  isShowModal.showImage &&
-                  (
-                    isShowModal.showImage ?
-                      <Image
-                        src={isShowModal.showImage}
-                        alt='image'
-                        width={600}
-                        height={600} />
-                      : <TailSpin color='green' />
-                  )
-                }
-
-                {
-                  isInputFields &&
-                  <React.Fragment>
-                    <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                      <div className="w-full px-3 mb-6 md:mb-4">
-                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-city">
-                          Title
-                        </label>
-                        <input
-                          onChange={handleChange}
-                          value={values?.optionObj?.itemName}
-                          name='optionObj.itemName'
-                          className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city"
-                          type="text"
-                          placeholder="Enter name of the item" />
-                      </div>
-                      <div className="w-full px-3 mb-6 md:mb-0">
-                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-city">
-                          Price
-                        </label>
-                        <input
-                          onChange={handleChange}
-                          value={values?.optionObj?.itemPrice}
-                          name='optionObj.itemPrice'
-                          className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                          type="number"
-                          placeholder="Enter price" />
-                      </div>
-                    </div>
-                    <div className="bg-gray-50 px-4 py-3 sm:flex sm:px-6">
-                      <button
-                        type="button"
-                        onClick={() => handleSubmit}
-                        className="ml-auto mr-auto text-green-400 mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
-                        Submit
-                      </button>
-                    </div>
-                  </React.Fragment>
-                } */}
               </div>
             </div>
           </div>

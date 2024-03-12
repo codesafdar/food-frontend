@@ -78,7 +78,7 @@ const Login: React.FC = () => {
 
   return (
     <>
-      <section id='login' className="pt-6 md:pt-10 px-4 max-h-full">
+      <section id='login' className="pt-6 md:pt-10 px-4 h-[100vh]">
         <form onSubmit={handleSubmit} className=''>
           <div className="font-bold text-[42px] md:text-[52px] text-center text-pink-600 mb-2">
             Cheezious

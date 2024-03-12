@@ -5,24 +5,21 @@ import { IFormInput } from "@/components/admin/Form";
 import { IAdminLogin } from "@/app/auth/admin-login/page";
 import { ICreateAdmin } from "@/components/admin/CreateAdmin";
 import axiosInstance from "@/services/axiosInterceptorInstance";
-import { resetToast } from "@/redux/slices/adminSlice";
 
 // category
 export const addCategory = createAsyncThunk(
   'category/add', async (data: ICategoryInput, thunkAPI) => {
+    console.log("🚀 ~ 'category/add', ~ data:", data)
     try {
-      const { isUpdate, category, _id } = data
-      let res
-      if (isUpdate) {
-        res = await axiosInstance.put(`${process.env.NEXT_PUBLIC_BASE_URL}category/${_id}`, { category })
-      } else {
-        res = await axiosInstance.post(`${process.env.NEXT_PUBLIC_BASE_URL}category/add`, data)
+      const res = await axiosInstance.post(`${process.env.NEXT_PUBLIC_BASE_URL}category/add`, data)
+      const status = res?.status
+      if (status === 201) {
+        await thunkAPI.dispatch(getCategories())
+        return res.data
       }
-
-      if (res.status === 201 || res.status === 200) return res.data
-      else return thunkAPI.rejectWithValue(category)
+      else return thunkAPI.rejectWithValue(res.data)
     } catch (err) {
-      console.log('err,err', err)
+      console.log('err`', err)
       return thunkAPI.rejectWithValue(err)
     }
   }
@@ -62,7 +59,12 @@ export const deleteCategory = createAsyncThunk(
 export const updateCategory = createAsyncThunk(
   'category/update', async (data: ICategoryInput, thunkAPI) => {
     try {
-      if (data) return data
+      const { _id, ...result } = data
+      const res = await axiosInstance.put(`${process.env.NEXT_PUBLIC_BASE_URL}category/${_id}`, result)
+      if (res.status === 200) {
+        await thunkAPI.dispatch(getCategories())
+        return res.data
+      }
       else thunkAPI.rejectWithValue(data)
     }
     catch (err: any) {
@@ -79,10 +81,9 @@ export const addOption = createAsyncThunk(
       const { optionData } = data
       const res = await axiosInstance.post(`${process.env.NEXT_PUBLIC_BASE_URL}options/create`, optionData)
       if (res.status === 201) {
-        thunkAPI.dispatch(getOptions())
+        await thunkAPI.dispatch(getOptions())
         return res.data
       }
-      else return thunkAPI.rejectWithValue(data)
     }
     catch (err: any) {
       return thunkAPI.rejectWithValue(err.response.data.message)
@@ -123,7 +124,7 @@ export const updateOption = createAsyncThunk(
       const res = await axiosInstance.put(`${process.env.NEXT_PUBLIC_BASE_URL}options/${optionData?._id}`, optionData)
       const responseData = res.data
       if (res.status = 200) {
-        thunkAPI.dispatch(getOptions())
+        await thunkAPI.dispatch(getOptions())
         return responseData
       } else return thunkAPI.rejectWithValue(responseData)
     }
@@ -187,7 +188,7 @@ export const updateProduct = createAsyncThunk(
       const update = await axiosInstance.put(`${process.env.NEXT_PUBLIC_BASE_URL}product/${id}`, data)
 
       if (update.status === 200) {
-        thunkAPI.dispatch(getAllProducts())
+        await thunkAPI.dispatch(getAllProducts())
         return update.data
       } else return thunkAPI.rejectWithValue(id)
 
@@ -242,7 +243,6 @@ export const getAllUsers = createAsyncThunk(
   'users/get', async (args, thunkAPI) => {
     try {
       const get = await axiosInstance(`${process.env.NEXT_PUBLIC_BASE_URL}admin/get-users`)
-
       if (get.status === 200) return get.data
       else return thunkAPI.rejectWithValue(get.data)
     }
@@ -258,7 +258,7 @@ export const deleteAdmin = createAsyncThunk(
     try {
       const res = await axiosInstance.delete(`${process.env.NEXT_PUBLIC_BASE_URL}admin/${id}`)
       if (res.status === 200) {
-        thunkAPI.dispatch(getAllUsers())
+        await thunkAPI.dispatch(getAllUsers())
         return res.data
       }
       else return thunkAPI.rejectWithValue(res.data)
@@ -266,9 +266,6 @@ export const deleteAdmin = createAsyncThunk(
     catch (err: any) {
       return thunkAPI.rejectWithValue(err.response.data.message)
     }
-    // finally {
-    //   thunkAPI.dispatch(resetToast())
-    // }
   }
 )
 
@@ -278,8 +275,7 @@ export const updateAdmin = createAsyncThunk(
     try {
       const res = await axiosInstance.put(`${process.env.NEXT_PUBLIC_BASE_URL}admin/${data?._id}`, data)
       if (res.status === 200) {
-        thunkAPI.dispatch(getAllUsers())
-
+        await thunkAPI.dispatch(getAllUsers())
         return res.data
       }
       else return thunkAPI.rejectWithValue(res.data)
