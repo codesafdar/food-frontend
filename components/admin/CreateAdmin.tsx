@@ -118,7 +118,9 @@ const CreateAdmin = ({ isEdit = false, data, setShowModal }: IAdminProps) => {
           <form onSubmit={handleSubmit}>
             <div className={`${isEdit ? 'w-full' : 'w-1/2'} px-3 pb-3 text-center ml-auto mr-auto  mt-5 space-y-6 flex flex-col justify-center`}>
               <div className='text-xl font-bold'>
-                {isEdit ? 'Update' : 'Create Admin'}
+                {
+                  isEdit ? 'Update' : 'Create Admin'
+                }
               </div>
               <div>
                 <input

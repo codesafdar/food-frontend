@@ -5,7 +5,7 @@ const Starters = () => {
 
   return (
     <div className=''>
-      <Card title='Starters' />
+      <Card category='Starters' />
     </div>
   )
 }

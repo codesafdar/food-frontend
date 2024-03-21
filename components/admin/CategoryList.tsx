@@ -9,7 +9,6 @@ import Button from './Button'
 // component
 const CategoryList = ({ setOnEdit }: any) => {
   const { categoryList, isLoading } = useAppSelector(state => state.admin)
-  console.log("🚀 ~ CategoryList ~ isLoading:", isLoading)
   const dispatch = useAppDispatch()
 
   useEffect(() => {

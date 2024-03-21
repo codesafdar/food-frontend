@@ -4,7 +4,7 @@ import Card from '../common/Card'
 const SomewhatSooper = () => {
   return (
     <div>
-      <Card title='Somewhat Sooper' />
+      <Card category='Somewhat Sooper' />
     </div>
   )
 }

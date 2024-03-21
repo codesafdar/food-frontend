@@ -5,7 +5,7 @@ const SomewhatLocal = () => {
 
   return (
     <div>
-      <Card title='Somewhat Local' />
+      <Card category='Somewhat Local' />
     </div>
   )
 }

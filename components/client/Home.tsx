@@ -2,7 +2,6 @@
 import React from 'react'
 import DividerComp from '@/components/common/Divider'
 import Starters from '@/components/client/Starters'
-import Header from '@/components/client/Header'
 import IBack from '@/components/client/IBack'
 import SomewhatLocal from '@/components/client/SomewhatLocal'
 import SomewhatSooper from '@/components/client/SomewhatSooper'

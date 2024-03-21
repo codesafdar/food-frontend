@@ -17,12 +17,7 @@ interface IProps {
   setFieldValue?: (field: string, value: any, shouldValidate?: boolean) => Promise<FormikErrors<FormikValues>> | Promise<void>
 }
 
-
-
 const Modal = ({ children, showModal, setShowModal }: any) => {
-
-
-
   return (
     <>
       {showModal &&

@@ -5,7 +5,7 @@ const IBack = () => {
 
   return (
     <div className='pt-24 pb-2'>
-      <Card title="I'm Back!" />
+      <Card category="I'm Back!" />
     </div>
   )
 }

@@ -1,35 +1,45 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { MdKeyboardArrowUp, MdKeyboardArrowDown } from "react-icons/md";
+import { IOptionType } from '../admin/OptionsAdmin';
 
 interface IAccordionProps {
-  title: string
+  item: IOptionType
   showItems: boolean
   setShowItems: React.Dispatch<React.SetStateAction<boolean>>
-
+  values: any
+  error: any
+  lowerTitle: string
+  touched: boolean | undefined
 }
 
-const Accordion = ({ title, setShowItems, showItems }: IAccordionProps) => {
+const Accordion = ({ item, lowerTitle, setShowItems, showItems, values, error }: IAccordionProps) => {
+  const isRequired = item?.isRequired
+  const isRequiredError = error && error[lowerTitle]
+
   return (
     <div
       onClick={() => setShowItems(!showItems)}
-      className='bg-slate-200 py-2 rounded-3xl px-3'>
+      className={`py-2 bg-${isRequiredError ? 'red-500' : 'slate-200'} rounded-3xl px-3`}>
       <div className='flex justify-between'>
         <div>
-          <span className='font-medium text-[14px] text-black'>{title}</span>
+          <span className={`font-medium text-[14px] text-${isRequiredError ? "white" : "black"}`}>{item?.option}</span>
           {
-            title === 'Variation' &&
-            <span className='ml-3 text-white bg-[#8bc34a] px-2 py-1 rounded-md font-normal text-[14px]'>Selected</span>
+            isRequired &&
+            <span className={`${isRequiredError && 'border-2 border-white p-1 rounded-md'} ml-3 text-white ${values[lowerTitle]?.itemPrice ? 'bg-[#8bc34a]' : 'bg-[#d40000]'}  px-2 py-1 rounded-md font-normal text-[14px]`}>
+              {
+                values[lowerTitle]?.itemPrice ? 'Selected' : 'Required'
+              }
+            </span>
           }
         </div>
         <div className='rounded-xl bg-[#0000008a] flex justify-center items-center w-5 cursor-pointer h-5'>
           {
             showItems ?
-              <MdKeyboardArrowDown className='text-slate-200' size={20} />
-              :
               <MdKeyboardArrowUp className='text-slate-200' size={20} />
+              :
+              <MdKeyboardArrowDown className='text-slate-200' size={20} />
           }
         </div>
-
       </div>
     </div>
   )

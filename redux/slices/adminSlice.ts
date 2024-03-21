@@ -45,7 +45,7 @@ export interface adminData {
   _id: string
 }
 
-const formInitialValues: IFormInput = {
+export const productInitialValues: IFormInput = {
   category: '',
   title: '',
   description: '',
@@ -74,7 +74,7 @@ const initialState: IAdminData = {
     showImage: '',
     id: ''
   },
-  getOneProductData: formInitialValues,
+  getOneProductData: productInitialValues,
   adminData: {
     access_token: '',
     refresh_token: '',
@@ -312,7 +312,7 @@ const adminSlice = createSlice({
       .addCase(updateProduct.fulfilled, state => {
         state.isLoading = false
         state.isSuccess = true
-        state.getOneProductData = formInitialValues
+        state.getOneProductData = productInitialValues
       })
       .addCase(updateProduct.rejected, (state, { payload }) => {
         state.isLoading = false

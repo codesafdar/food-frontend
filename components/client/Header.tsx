@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import React from 'react'
+import React, { useState } from 'react'
 import companyLogo from '../../public/images/cheezious_logo.webp'
 import { MdOutlineSearch } from "react-icons/md";
 import { IoPersonCircle } from "react-icons/io5";
@@ -8,15 +8,26 @@ import { MdArrowDropDown } from "react-icons/md";
 import NavItems from './NavItems';
 import { MdLocationOn } from "react-icons/md";
 import { usePathname } from 'next/navigation'
+import SideBar from '../admin/SiderBar';
+import SideDrawer from './SideDrawer';
 
 
 const Header = () => {
   const path = usePathname()
+  const [drawer, setDrawer] = useState(false)
+
   const handleCheckout = () => {
+    setDrawer(!drawer)
   }
-  
+
   return (
     <>
+      <SideDrawer drawer={drawer} setDrawer={setDrawer} />
+      {/* {drawer ? (
+        <div className="bg-black/80 fixed w-full h-screen z-10 top-0 left-0"></div>
+      ) : (
+        ""
+      )} */}
       <div className='bg-yellow-400 height-[82px] top-0 left-0 fixed right-0 py-4 lg:px-24 px-8 z-10 mb-0'>
         <div className='flex justify-between items-center'>
           <div className='flex'>
